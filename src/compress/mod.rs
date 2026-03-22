@@ -305,6 +305,73 @@ impl CompressorInner {
     }
 }
 
+/// Compressor that only writes stored (uncompressed) deflate blocks inside a zlib stream.
+///
+/// This is useful for writing data that does not need to be compressed, but still needs to be
+/// wrapped in a zlib stream.
+pub struct StoredOnlyCompressor<W: Write> {
+    writer: W,
+    checksum: Adler32,
+    block_buf: Vec<u8>,
+}
+impl<W: Write> StoredOnlyCompressor<W> {
+    /// Creates a new `StoredOnlyCompressor` that writes to the given writer.
+    pub fn new(mut writer: W) -> io::Result<Self> {
+        writer.write_all(&[0x78, 0x01])?; // zlib header
+        Ok(Self {
+            writer,
+            checksum: Adler32::new(),
+            block_buf: Vec::new(),
+        })
+    }
+
+    fn flush_block(&mut self, last: bool) -> io::Result<()> {
+        let len = self.block_buf.len() as u16;
+        let nlen = !len;
+        self.writer.write_all(&[
+            last as u8,
+            (len & 0xFF) as u8,
+            ((len >> 8) & 0xFF) as u8,
+            (nlen & 0xFF) as u8,
+            ((nlen >> 8) & 0xFF) as u8,
+        ])?;
+        self.writer.write_all(&self.block_buf)?;
+        self.block_buf.clear();
+        Ok(())
+    }
+
+    /// Writes data to the compressor.
+    pub fn write_data(&mut self, mut data: &[u8]) -> io::Result<()> {
+        self.checksum.write(data);
+        while !data.is_empty() {
+            let remaining = STORED_BLOCK_MAX_SIZE - self.block_buf.len();
+            let chunk = data.len().min(remaining);
+            self.block_buf.extend_from_slice(&data[..chunk]);
+            data = &data[chunk..];
+            if self.block_buf.len() == STORED_BLOCK_MAX_SIZE {
+                self.flush_block(false)?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Finish writing the stream and return the underlying writer.
+    pub fn finish(mut self) -> io::Result<W> {
+        self.flush_block(true)?;
+        let checksum = self.checksum.finish();
+        self.writer.write_all(&checksum.to_be_bytes())?;
+        Ok(self.writer)
+    }
+
+    /// Returns the number of bytes that will be written to the output for the given input size.
+    ///
+    /// Because this compressor only writes stored blocks, the output is always slightly larger
+    /// than the input. This method gives an upper bound assuming all blocks are full.
+    pub fn compressed_size(raw_size: usize) -> usize {
+        (raw_size.saturating_sub(1) / STORED_BLOCK_MAX_SIZE + 1) * (STORED_BLOCK_MAX_SIZE + 5) + 6
+    }
+}
+
 /// Compresses the given data.
 pub fn compress_to_vec(input: &[u8]) -> Vec<u8> {
     compress_to_vec_with_level(input, 1)
