@@ -20,7 +20,7 @@ categories = ["compression"]
 
 [features]
 default = []
-std = ["simd-adler32/std"]
+std = ["simd-adler32/std", "no_std_io/std"]
 simd = ["simd-adler32/default"]
 
 [dependencies]

@@ -26,9 +26,6 @@ extern crate alloc;
 
 use alloc::vec;
 
-#[cfg(feature = "std")]
-pub(crate) use std::io;
-#[cfg(not(feature = "std"))]
 pub(crate) use no_std_io::io;
 
 mod compress;
