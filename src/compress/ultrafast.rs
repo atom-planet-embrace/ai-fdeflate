@@ -184,6 +184,8 @@ impl<W: Write> UltraFastCompressor<W> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::vec;
+    use alloc::vec::Vec;
     use rand::Rng;
 
     fn compress_to_vec_ultrafast(input: &[u8]) -> Vec<u8> {
