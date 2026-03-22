@@ -4,8 +4,8 @@ mod matchfinder;
 mod parse;
 mod ultrafast;
 
-use alloc::vec::Vec;
 use crate::io::{self, Write};
+use alloc::vec::Vec;
 
 use simd_adler32::Adler32;
 

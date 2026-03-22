@@ -1,7 +1,7 @@
 //! Methods for encoding the deflate bitstream.
 
-use alloc::{collections::BinaryHeap, vec::Vec};
 use crate::io::{self, Write};
+use alloc::{collections::BinaryHeap, vec::Vec};
 
 use crate::{
     compress::BitWriter,

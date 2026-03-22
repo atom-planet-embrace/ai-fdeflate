@@ -2,8 +2,8 @@ mod greedy;
 mod lazy;
 mod rle;
 
-use alloc::vec::Vec;
 use crate::io::{self, Write};
+use alloc::vec::Vec;
 
 pub(crate) use greedy::*;
 pub(crate) use lazy::*;
