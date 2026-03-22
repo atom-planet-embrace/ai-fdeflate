@@ -1,3 +1,5 @@
+This is a fork of the [fdeflate](https://crates.io/crates/fdeflate) crate.
+
 # ai-fdeflate
 
 [![crates.io](https://img.shields.io/crates/v/ai-fdeflate.svg)](https://crates.io/crates/ai-fdeflate)
