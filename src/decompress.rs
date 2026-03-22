@@ -1,5 +1,6 @@
+use alloc::{boxed::Box, vec, vec::Vec};
+use core::num::NonZeroUsize;
 use simd_adler32::Adler32;
-use std::num::NonZeroUsize;
 
 use crate::{
     huffman::{self, build_table},
@@ -62,7 +63,7 @@ pub const LITERAL_ENTRY: u32 = 0x8000;
 pub const EXCEPTIONAL_ENTRY: u32 = 0x4000;
 pub const SECONDARY_TABLE_ENTRY: u32 = 0x2000;
 
-// See https://github.com/image-rs/fdeflate/issues/45 for discussion of the table sizes.
+// See https://github.com/atom-planet-embrace/fdeflate/issues/45 for discussion of the table sizes.
 const DEFAULT_LITLEN_TABLE_SIZE: usize = 4096;
 const DEFAULT_DIST_TABLE_SIZE: usize = 512;
 
@@ -1143,7 +1144,7 @@ pub fn decompress_to_vec_bounded(
     Ok(output)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use crate::tables::{LENGTH_TO_LEN_EXTRA, LENGTH_TO_SYMBOL};
 

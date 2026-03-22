@@ -18,8 +18,18 @@
 //! * [fpnge](https://github.com/veluca93/fpnge)
 //! * [zune-inflate](https://github.com/etemesi254/zune-image/tree/main/zune-inflate)
 //! * [RealTime Data Compression blog](https://fastcompression.blogspot.com/2015/10/huffman-revisited-part-4-multi-bytes.html)
+#![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
+
+extern crate alloc;
+
+use alloc::vec;
+
+#[cfg(feature = "std")]
+pub(crate) use std::io;
+#[cfg(not(feature = "std"))]
+pub(crate) use no_std_io::io;
 
 mod compress;
 mod decompress;

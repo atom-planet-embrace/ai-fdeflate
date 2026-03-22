@@ -2,7 +2,8 @@ mod greedy;
 mod lazy;
 mod rle;
 
-use std::io::{self, Write};
+use alloc::vec::Vec;
+use crate::io::{self, Write};
 
 pub(crate) use greedy::*;
 pub(crate) use lazy::*;

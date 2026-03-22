@@ -3,7 +3,7 @@ use libfuzzer_sys::fuzz_target;
 use std::io::{Cursor, Read};
 
 fuzz_target!(|data: Vec<Vec<u8>>| {
-    let mut compressor = fdeflate::Compressor::new(Cursor::new(Vec::new()), 0, true).unwrap();
+    let mut compressor = ai_fdeflate::Compressor::new(Cursor::new(Vec::new()), 0, true).unwrap();
     for chunk in &data {
         compressor.write_data(&*chunk).unwrap();
     }

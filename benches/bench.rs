@@ -2,7 +2,7 @@
 
 extern crate test;
 
-use fdeflate::compress_to_vec;
+use ai_fdeflate::compress_to_vec;
 use rand::Rng;
 
 #[bench]
@@ -16,7 +16,7 @@ fn bench_compute_code_lengths(b: &mut test::Bencher) {
 
     b.iter(|| {
         let mut lengths = vec![0; N];
-        fdeflate::compute_code_lengths(&freqs, &[1; N], &[8; N], &mut lengths);
+        ai_fdeflate::compute_code_lengths(&freqs, &[1; N], &[8; N], &mut lengths);
     });
 }
 

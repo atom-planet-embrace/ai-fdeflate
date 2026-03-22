@@ -1,5 +1,5 @@
+use crate::io::{self, Write};
 use simd_adler32::Adler32;
-use std::io::{self, Write};
 
 use crate::tables::{
     BITMASKS, HUFFMAN_CODES, HUFFMAN_LENGTHS, LENGTH_TO_LEN_EXTRA, LENGTH_TO_SYMBOL,
@@ -187,9 +187,12 @@ mod tests {
     use rand::Rng;
 
     fn compress_to_vec_ultrafast(input: &[u8]) -> Vec<u8> {
-        let mut compressor = UltraFastCompressor::new(Vec::with_capacity(input.len() / 4)).unwrap();
+        let mut compressor = UltraFastCompressor::new(crate::compress::VecWriter(
+            Vec::with_capacity(input.len() / 4),
+        ))
+        .unwrap();
         compressor.write_data(input).unwrap();
-        compressor.finish().unwrap()
+        compressor.finish().unwrap().0
     }
 
     fn roundtrip(data: &[u8]) {

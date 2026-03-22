@@ -1,4 +1,4 @@
-use std::io::{self, Write};
+use crate::io::{self, Write};
 
 pub(super) struct BitWriter<W: Write> {
     buffer: u64,

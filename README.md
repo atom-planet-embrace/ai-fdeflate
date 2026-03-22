@@ -1,8 +1,8 @@
-# fdeflate
+# ai-fdeflate
 
-[![crates.io](https://img.shields.io/crates/v/fdeflate.svg)](https://crates.io/crates/fdeflate)
-[![Documentation](https://docs.rs/fdeflate/badge.svg)](https://docs.rs/fdeflate)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/image-rs/fdeflate/rust.yml?label=Rust%20CI)](https://github.com/image-rs/fdeflate/actions)
+[![crates.io](https://img.shields.io/crates/v/ai-fdeflate.svg)](https://crates.io/crates/ai-fdeflate)
+[![Documentation](https://docs.rs/ai-fdeflate/badge.svg)](https://docs.rs/ai-fdeflate)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/atom-planet-embrace/ai-fdeflate/rust.yml?label=Rust%20CI)](https://github.com/atom-planet-embrace/ai-fdeflate/actions)
 
 A fast, safe, and modern zlib implementation for PNG.
 
@@ -22,9 +22,9 @@ The decoder employs several modern features than help it achieve exceptional per
 
 The compressor is still under active development, with the current status tracked on the main branch.
 
-<!-- Internally, `fdeflate` (like other compression libraries) maps different compression levels to different algorithms and parameters. -->
+<!-- Internally, `ai-fdeflate` (like other compression libraries) maps different compression levels to different algorithms and parameters. -->
 
-[Preliminary benchmark data](https://github.com/image-rs/fdeflate/discussions/68) shows that `fdeflate` meaningfully outperforms `zlib-rs` for levels 1-3 and is slightly better for levels 4-7. Levels 8 and 9 aren't yet implemented.
+[Preliminary benchmark data](https://github.com/atom-planet-embrace/ai-fdeflate/discussions/68) shows that `ai-fdeflate` meaningfully outperforms `zlib-rs` for levels 1-3 and is slightly better for levels 4-7. Levels 8 and 9 aren't yet implemented.
 
 ### Ultra-fast compression
 

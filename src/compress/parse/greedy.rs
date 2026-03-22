@@ -1,4 +1,4 @@
-use std::io::{self, Write};
+use crate::io::{self, Write};
 
 use crate::compress::{
     matchfinder::{Match, MatchFinder},

@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::decompress::{EXCEPTIONAL_ENTRY, LITERAL_ENTRY, SECONDARY_TABLE_ENTRY};
 
 /// Return the next code, or if the codeword is already all ones (which is the final code), return
@@ -183,7 +185,7 @@ pub fn build_table(
     true
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod test {
     use super::{LITERAL_ENTRY, SECONDARY_TABLE_ENTRY};
     use crate::tables::LITLEN_TABLE_ENTRIES;

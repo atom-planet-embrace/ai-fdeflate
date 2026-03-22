@@ -4,9 +4,24 @@ mod matchfinder;
 mod parse;
 mod ultrafast;
 
-use std::io::{self, Write};
+use alloc::vec::Vec;
+use crate::io::{self, Write};
 
 use simd_adler32::Adler32;
+
+/// A wrapper around `Vec<u8>` that implements `Write`.
+pub(crate) struct VecWriter(pub(crate) Vec<u8>);
+
+impl Write for VecWriter {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        self.0.extend_from_slice(buf);
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
 pub use ultrafast::UltraFastCompressor;
 
 use bitwriter::BitWriter;
@@ -123,7 +138,7 @@ impl<W: Write> Compressor<W> {
     }
 
     /// Write data to the compressor.
-    pub fn write_data(&mut self, data: &[u8]) -> std::io::Result<()> {
+    pub fn write_data(&mut self, data: &[u8]) -> io::Result<()> {
         // Encoders use 32-bit indices in various places for performance. Limiting the input size
         // here simplifies things.
         const CHUNK_SIZE: usize = 1024 * 1024 * 1024;
@@ -191,7 +206,7 @@ impl<W: Write> Compressor<W> {
     }
 
     /// Write the remainder of the stream and return the inner writer.
-    pub fn finish(mut self) -> std::io::Result<W> {
+    pub fn finish(mut self) -> io::Result<W> {
         let written = self.inner.compress(
             &mut self.writer,
             &self.input.data,
@@ -230,7 +245,7 @@ impl CompressorInner {
         base_index: u32,
         start: usize,
         flush: Flush,
-    ) -> std::io::Result<usize> {
+    ) -> io::Result<usize> {
         if flush == Flush::Finish && input.len() == start {
             writer.write_bits(3, 10)?;
             writer.flush()?;
@@ -297,21 +312,24 @@ pub fn compress_to_vec(input: &[u8]) -> Vec<u8> {
 
 /// Compresses the given data with a specific compression level.
 pub fn compress_to_vec_with_level(input: &[u8], level: u8) -> Vec<u8> {
-    let mut compressor = Compressor::new(Vec::with_capacity(input.len() / 4), level, true).unwrap();
+    let mut compressor =
+        Compressor::new(VecWriter(Vec::with_capacity(input.len() / 4)), level, true).unwrap();
     compressor.write_data(input).unwrap();
-    compressor.finish().unwrap()
+    compressor.finish().unwrap().0
 }
 
 /// Compresses the given data using only RLE matches.
 pub fn compress_to_vec_rle(input: &[u8]) -> Vec<u8> {
-    let mut compressor = Compressor::new_rle(Vec::with_capacity(input.len() / 4), true).unwrap();
+    let mut compressor =
+        Compressor::new_rle(VecWriter(Vec::with_capacity(input.len() / 4)), true).unwrap();
     compressor.write_data(input).unwrap();
-    compressor.finish().unwrap()
+    compressor.finish().unwrap().0
 }
 
 /// Compresses the given data using the ultra fast compression method.
 pub fn compress_to_vec_ultra_fast(input: &[u8]) -> Vec<u8> {
-    let mut compressor = UltraFastCompressor::new(Vec::with_capacity(input.len() / 4)).unwrap();
+    let mut compressor =
+        UltraFastCompressor::new(VecWriter(Vec::with_capacity(input.len() / 4))).unwrap();
     compressor.write_data(input).unwrap();
-    compressor.finish().unwrap()
+    compressor.finish().unwrap().0
 }

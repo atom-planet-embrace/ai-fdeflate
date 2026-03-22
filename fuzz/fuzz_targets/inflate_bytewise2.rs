@@ -17,7 +17,7 @@ fuzz_target!(|input: (u8, Vec<u8>)| {
     let mut decompressed = Vec::new();
     let mut input_index = 0;
     let mut output_position = 0;
-    let mut decoder = fdeflate::Decompressor::new();
+    let mut decoder = ai_fdeflate::Decompressor::new();
     loop {
         decompressed.resize(output_position + 1024, 0);
 

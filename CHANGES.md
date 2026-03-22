@@ -4,8 +4,8 @@
 
  - Optimized decoding of streams that use fixed huffman blocks ([#38], [#39])
 
-[#38]: https://github.com/image-rs/fdeflate/pull/38
-[#39]: https://github.com/image-rs/fdeflate/pull/39
+[#38]: https://github.com/atom-planet-embrace/fdeflate/pull/38
+[#39]: https://github.com/atom-planet-embrace/fdeflate/pull/39
 
 ## 0.3.6
 
@@ -18,10 +18,10 @@ These improvements were inspired by the algorithms in `zune-inflate`.
 - Add a fast path to the DEFLATE decoding loop that processes more bytes at a time, benefitting performance on large images ([#34])
 - Re-add test files into the crates.io tarball since they are so small. They may be removed in the future if they grow in size ([#35])
 
-[#31]: https://github.com/image-rs/fdeflate/pull/31
-[#32]: https://github.com/image-rs/fdeflate/pull/32
-[#34]: https://github.com/image-rs/fdeflate/pull/34
-[#35]: https://github.com/image-rs/fdeflate/pull/35
+[#31]: https://github.com/atom-planet-embrace/fdeflate/pull/31
+[#32]: https://github.com/atom-planet-embrace/fdeflate/pull/32
+[#34]: https://github.com/atom-planet-embrace/fdeflate/pull/34
+[#35]: https://github.com/atom-planet-embrace/fdeflate/pull/35
 
 
 ## 0.3.5

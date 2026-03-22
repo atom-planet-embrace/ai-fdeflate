@@ -1,4 +1,4 @@
-//! Testing utilities for testing `fdeflate::Decompressor`.
+//! Testing utilities for testing `ai_fdeflate::Decompressor`.
 //!
 //! These utilities are used by:
 //!
@@ -6,9 +6,9 @@
 //! * Fuzzers (e.g. `fuzz/fuzz_targets/inflate_bytewise3.rs`)
 
 #[cfg(test)]
-use crate as fdeflate;
+use crate as ai_fdeflate;
 
-use fdeflate::{DecompressionError, Decompressor};
+use ai_fdeflate::{DecompressionError, Decompressor};
 
 #[derive(Debug, PartialEq)]
 pub enum TestDecompressionError {

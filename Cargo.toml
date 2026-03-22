@@ -1,5 +1,5 @@
 [package]
-name = "fdeflate"
+name = "ai-fdeflate"
 version = "0.4.0"
 edition = "2021"
 publish = false
@@ -13,13 +13,19 @@ authors = ["The image-rs Developers"]
 include = ["/src", "/tests", "README.md", "LICENSE-APACHE", "LICENSE-MIT"]
 
 # crates.io metadata
-documentation = "https://docs.rs/fdeflate"
-repository = "https://github.com/image-rs/fdeflate"
-homepage = "https://github.com/image-rs/fdeflate"
+documentation = "https://docs.rs/ai-fdeflate"
+repository = "https://github.com/atom-planet-embrace/ai-fdeflate"
+homepage = "https://github.com/atom-planet-embrace/ai-fdeflate"
 categories = ["compression"]
 
+[features]
+default = []
+std = ["simd-adler32/std"]
+simd = ["simd-adler32/default"]
+
 [dependencies]
-simd-adler32 = "0.3.4"
+no_std_io = { version = "0.6", default-features = false }
+simd-adler32 = { version = "0.3.4", default-features = false }
 
 [dev-dependencies]
 miniz_oxide = "0.8.9"

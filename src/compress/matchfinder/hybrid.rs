@@ -1,3 +1,5 @@
+use alloc::{boxed::Box, vec};
+
 use crate::compress::{
     matchfinder::{Match, MatchFinder},
     WINDOW_SIZE,

@@ -1,9 +1,7 @@
 //! Methods for encoding the deflate bitstream.
 
-use std::{
-    collections::BinaryHeap,
-    io::{self, Write},
-};
+use alloc::{collections::BinaryHeap, vec::Vec};
+use crate::io::{self, Write};
 
 use crate::{
     compress::BitWriter,
@@ -216,12 +214,12 @@ fn build_huffman_tree(
     #[derive(Eq, PartialEq, Copy, Clone, Debug)]
     struct Item(u32, u16);
     impl Ord for Item {
-        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        fn cmp(&self, other: &Self) -> core::cmp::Ordering {
             other.0.cmp(&self.0)
         }
     }
     impl PartialOrd for Item {
-        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
             Some(self.cmp(other))
         }
     }

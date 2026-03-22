@@ -8,11 +8,11 @@ extern crate miniz_oxide;
 
 fuzz_target!(|input: (Vec<u8>, Vec<u8>)| {
     let joined = input.0.iter().chain(&input.1).copied().collect::<Vec<u8>>();
-    let full_output = fdeflate::decompress_to_vec(&joined);
+    let full_output = ai_fdeflate::decompress_to_vec(&joined);
     // println!("-------------");
 
-    let split_output: Result<_, fdeflate::DecompressionError> = (|| {
-        let mut decoder = fdeflate::Decompressor::new();
+    let split_output: Result<_, ai_fdeflate::DecompressionError> = (|| {
+        let mut decoder = ai_fdeflate::Decompressor::new();
         let mut output = vec![0; 1024];
         let mut input_index = 0;
         let mut output_index = 0;
@@ -35,7 +35,7 @@ fuzz_target!(|input: (Vec<u8>, Vec<u8>)| {
             )?;
 
             if !decoder.is_done() && consumed == 0 && produced == 0 {
-                return Err(fdeflate::DecompressionError::InsufficientInput);
+                return Err(ai_fdeflate::DecompressionError::InsufficientInput);
             }
 
             input_index += consumed;
