@@ -60,7 +60,7 @@ fn match_length<const MIN_MATCH8: bool>(
         "Match past current position: {prev_index} {ip}"
     );
 
-    let prev = u64::from_ne_bytes(data[prev_index..][..8].try_into().unwrap());
+    let prev = u64::from_le_bytes(data[prev_index..][..8].try_into().unwrap());
 
     let mut length;
     if MIN_MATCH8 {
@@ -92,8 +92,8 @@ fn match_length<const MIN_MATCH8: bool>(
             if chunk == prev_chunk {
                 length += 8;
             } else {
-                let chunk = u64::from_ne_bytes(chunk.try_into().unwrap());
-                let prev_chunk = u64::from_ne_bytes(prev_chunk.try_into().unwrap());
+                let chunk = u64::from_le_bytes(chunk.try_into().unwrap());
+                let prev_chunk = u64::from_le_bytes(prev_chunk.try_into().unwrap());
                 length += (chunk ^ prev_chunk).trailing_zeros() as usize / 8;
                 break 'fsearch; // skip the remainder loop below
             }
@@ -126,7 +126,7 @@ pub(super) fn rle_match(data: &[u8], last_match: usize, ip: usize) -> Match {
     let (chunks, remainder): (&[[u8; 8]], _) = data.as_chunks();
     for &chunk in chunks {
         if chunk != [value; 8] {
-            m.length += (u64::from_ne_bytes(chunk) ^ u64::from_ne_bytes([value; 8]))
+            m.length += (u64::from_le_bytes(chunk) ^ u64::from_le_bytes([value; 8]))
                 .trailing_zeros() as u16
                 / 8;
             return m;
@@ -173,4 +173,50 @@ impl MatchFinder for NullMatchFinder {
     }
     fn insert(&mut self, _value: u64, _offset: u32) {}
     fn reset_indices(&mut self, _old_base_index: u32) {}
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Regression test for the `from_ne_bytes` → `from_le_bytes` fix.
+    ///
+    /// The `trailing_zeros() / 8` idiom counts matching bytes from the
+    /// least-significant end, so the bytes must be loaded in little-endian
+    /// order.  On a big-endian host, `from_ne_bytes` reverses the byte order
+    /// and `trailing_zeros` counts from the wrong direction.
+    ///
+    /// Concrete failure case: if the *first* byte of a forward-extension
+    /// chunk differs but the remaining 7 bytes are identical, `from_le_bytes`
+    /// correctly reports 0 additional bytes, while `from_ne_bytes` on a
+    /// big-endian host reports 7, producing a match that extends 7 bytes past
+    /// the actual end of the common prefix.
+    #[test]
+    fn match_length_byte_order() {
+        // Memory layout
+        // ┌────────────────────────────────┐
+        // │ offset  0: [A A A A A A A A]   │  ← prev_index = 0
+        // │ offset  8: [X C C C C C C C]   │
+        // │ offset 16: [A A A A A A A A]   │  ← ip = 16
+        // │ offset 24: [B C C C C C C C]   │  (B ≠ X, both ≠ A)
+        // └────────────────────────────────┘
+        //
+        // First 8 bytes match (all 'A'), so match_length::<true> proceeds.
+        // The forward-extension chunk at [ip+8] vs [prev+8] has its *first*
+        // byte differ (B vs X) while the other 7 bytes are identical ('C').
+        // Correct answer: match length = 8.
+        // With from_ne_bytes on big-endian: trailing_zeros finds 7 low bytes
+        // equal and returns 7, giving a length of 15 — wrong.
+        let mut data = [0u8; 32];
+        data[0..8].fill(b'A');
+        data[8] = b'X';
+        data[9..16].fill(b'C');
+        data[16..24].fill(b'A');
+        data[24] = b'B';
+        data[25..32].fill(b'C');
+
+        let value = u64::from_le_bytes(data[16..24].try_into().unwrap());
+        let (length, _start) = match_length::<true>(value, &data, 0, 16, 0);
+        assert_eq!(length, 8);
+    }
 }

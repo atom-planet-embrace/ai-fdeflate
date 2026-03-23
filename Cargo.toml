@@ -1,8 +1,8 @@
 [package]
 name = "ai-fdeflate"
-version = "0.4.0"
+version = "0.3.8"
 edition = "2021"
-publish = false
+publish = true
 
 # note: when changed, also update test runner in `.github/workflows/rust.yml`
 rust-version = "1.88.0"
