@@ -1,4 +1,4 @@
-This is a fork of the [fdeflate](https://crates.io/crates/fdeflate) crate.
+This is a fork of the [fdeflate](https://crates.io/crates/fdeflate) crate. The git repository is located at https://github.com/image-rs/fdeflate.
 
 # ai-fdeflate
 
